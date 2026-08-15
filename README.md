@@ -1,33 +1,21 @@
 # Complaints Volume Forecasting
 
-Forecasts daily incoming complaint volume for the 90 days following the end
-of the supplied dataset (**2026-01-01 to 2026-03-31**), to support capacity
-planning, triage resourcing, and prioritisation.
+Forecasts daily incoming complaint volume for the 90 days following the end of the supplied dataset (**2026-01-01 to 2026-03-31**), to support capacity planning, triage resourcing, and prioritisation.
 
-
-
-Overview: rolling-origin backtested 4 candidate models at the real
-90-day horizon. A simple Holt-Winters (weekly seasonality + damped trend)
-model beat a LightGBM gradient-boosting model on backtest error - with
-only 3 years of history, the simpler model generalised better. Final results find that a Holt-Winters + an annual seasonal correction performs best (justification below). 
-
-
-Complaints are expected to stay elevated (~108-128/day) through Jan-Mar 2026, peaking in February before a slight pull-back in March, consistent with the seasonal pattern in every prior year - continuing the year-on-year upward trend visible since 2023.
+Overview: Rolling backtested 4 candidate models for predicting on a 90-day horizon. With only 3 years of data, a simpler model that generalised better is likely to be best. Backtesting finds that a Holt-Winters model without seasonality performed best, but a Holt-Winters with seasonality was selected for the final predictions to capture the impact of yearly seasonality. Complaints are expected to stay elevated (~108-128/day) peaking in February before a reduction in March, consistent with the seasonal pattern in every prior year. This also continues a year on year upward trend visible across the whole data. 
 
 ## How to run
-
 ```bash
 pip install -r requirements.txt
 python main.py            # full pipeline
 ```
 
 ## Project structure
-
 ```
 complaints-forecast/
 ├── README.md 
 ├── requirements.txt
-├── main.py                      <- single entry point
+├── main.py                  
 ├── data/
 │   └── Principle_Data_Scientist_Tech_Assessment.xlxs
 ├── src/
@@ -44,19 +32,16 @@ complaints-forecast/
     │   ├── backtest_comparison.png
     │   └── final_forecast.png
     └── forecasts/
-        ├── forecast_90d.csv         <- the deliverable
-        ├── backtest_summary.csv     <- metrics table
-        └── backtest_detail.csv      <- every backtest prediction, for audit
+        ├── forecast_90d.csv <- output of model for future 90 days
+        ├── backtest_summary.csv 
+        └── backtest_detail.csv 
 ```
 
 ## EDA findings
 
-EDA is run in juypter notebook `exploratory_data_analysis.ipynb` has eda run and results. 
+EDA is run in juypter notebook `exploratory_data_analysis.ipynb` 
 
-1. **Data quality**: 43 whole days are missing from the calendar and a
-   further 10 rows have an explicit NaN `complaints` value (~5% of days
-   affected). No duplicate dates. Gaps look scattered rather than
-   systematic (no concentration on a particular weekday).
+1. **Data quality**: 43 whole days are missing from the calendar and afurther 10 rows have an explicit NaN `complaints` value (~5% of daysaffected). No duplicate dates. Gaps look scattered rather than systematic (no concentration on a particular weekday).
 
 2. **Weekly seasonality**: Mon-Wed run ~85/day, Thu-Fri dip to ~72-74/day,
    weekends sit in between. Consistent enough to model directly.
