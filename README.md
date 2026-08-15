@@ -134,8 +134,7 @@ Additonally, as the amount of data was increased the Holt-Winters with seasonal 
 The final forecast is output to`outputs/forecasts/forecast_90d.csv` 
 
 
-
-[<img title="" src="path/to/image.png" alt="">]
+[<img title="" src="outputs/plots/final_forecast.png" alt="">]
 
 
 
